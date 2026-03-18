@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DOTAMIL – Prototipo</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --olive: #4a5c3a;
+    --olive-dark: #2e3a24;
+    --olive-light: #6b7c5a;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --sand: #f0e8d0;
+    --sand-light: #faf6ee;
+    --charcoal: #1a1f14;
+    --white: #ffffff;
+    --danger: #c0392b;
+    --success: #27ae60;
+    --gray: #8a9180;
+    --border: rgba(74,92,58,0.2);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--charcoal);
+    color: var(--sand);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SCREENS */
+  .screen {
+    display: none;
+    min-height: 100vh;
+    animation: fadeIn 0.35s ease;
+  }
+  .screen.active { display: flex; flex-direction: column; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SPLASH / ONBOARDING */
+  #screen-splash {
+    background: linear-gradient(160deg, var(--olive-dark) 0%, var(--charcoal) 60%);
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #screen-splash::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border: 1px solid rgba(201,168,76,0.1);
+    border-radius: 50%;
+    top: -200px; right: -200px;
+  }
+  #screen-splash::after {
+    content: '';
+    position: absolute;
+    width: 300px; height: 300px;
+    border: 1px solid rgba(201,168,76,0.07);
+    border-radius: 50%;
+    bottom: -100px; left: -100px;
+  }
+
+  .splash-inner {
+    text-align: center;
+    z-index: 1;
+    padding: 40px 24px;
+  }
+
+  .logo-badge {
+    width: 100px; height: 100px;
+    background: var(--olive);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    box-shadow: 0 0 40px rgba(201,168,76,0.2);
+  }
+
+  .app-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    letter-spacing: 6px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .app-tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    margin-bottom: 48px;
+  }
+
+  .splash-stats {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-bottom: 48px;
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--gold);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--gray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: var(--gold);
+    color: var(--charcoal);
+    border: none;
+    padding: 16px 48px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    display: inline-block;
+    width: 100%;
+    max-width: 280px;
+  }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--sand);
+    border: 1px solid rgba(240,232,208,0.3);
+    padding: 14px 48px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    display: inline-block;
+    width: 100%;
+    max-width: 280px;
+    margin-top: 12px;
+  }
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* TOP BAR */
+  .topbar {
+    background: var(--olive-dark);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .topbar-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--gold);
+  }
+
+  .topbar-user {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+  }
+
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--sand);
+    cursor: pointer;
+    font-size: 20px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+  }
+
+  /* HOME */
+  #screen-home {
+    background: var(--charcoal);
+  }
+
+  .home-header {
+    background: linear-gradient(135deg, var(--olive-dark) 0%, var(--olive) 100%);
+    padding: 24px 20px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-header::after {
+    content: '◈';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 80px;
+    color: rgba(201,168,76,0.08);
+  }
+
+  .greeting {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .user-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .user-rank {
+    font-size: 12px;
+    color: rgba(240,232,208,0.6);
+    margin-top: 2px;
+  }
+
+  .urgency-banner {
+    background: var(--danger);
+    margin: 16px 20px 0;
+    padding: 10px 14px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .urgency-dot { width: 8px; height: 8px; background: #ff6b6b; border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    padding: 20px 20px 10px;
+    text-transform: uppercase;
+  }
+
+  /* CATEGORY GRID */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 20px;
+  }
+
+  .cat-card {
+    background: var(--olive-dark);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cat-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  .cat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+  .cat-card:hover::after { transform: scaleX(1); }
+
+  .cat-icon { font-size: 28px; margin-bottom: 10px; }
+  .cat-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+  .cat-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+
+  /* FILTERS BAR */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .filter-chip {
+    background: var(--olive-dark);
+    border: 1px solid var(--border);
+    color: var(--sand);
+    padding: 6px 14px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .filter-chip.active, .filter-chip:hover {
+    background: var(--gold);
+    color: var(--charcoal);
+    border-color: var(--gold);
+  }
+
+  /* PROVIDER CARDS */
+  .providers-list {
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 80px;
+  }
+
+  .provider-card {
+    background: var(--olive-dark);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .provider-card:hover { border-color: var(--gold); }
+
+  .provider-top {
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .provider-avatar {
+    width: 44px; height: 44px;
+    background: var(--olive);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .provider-info { flex: 1; }
+
+  .provider-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 17px;
+    letter-spacing: 1px;
+    color: var(--white);
+  }
+
+  .provider-location {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--gray);
+    margin-top: 2px;
+  }
+
+  .provider-score {
+    text-align: right;
+  }
+
+  .score-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gray);
+    letter-spacing: 1px;
+  }
+
+  .provider-tags {
+    padding: 0 16px 14px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 3px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+  }
+
+  .tag-price { background: rgba(39,174,96,0.15); color: #27ae60; border: 1px solid rgba(39,174,96,0.3); }
+  .tag-fast { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+  .tag-secure { background: rgba(74,92,58,0.4); color: var(--sand); border: 1px solid var(--border); }
+  .tag-delivery { background: rgba(41,128,185,0.15); color: #3498db; border: 1px solid rgba(41,128,185,0.3); }
+
+  .provider-metrics {
+    border-top: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    gap: 20px;
+  }
+
+  .metric {
+    flex: 1;
+    text-align: center;
+  }
+
+  .metric-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: var(--white);
+  }
+
+  .metric-lbl {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* DETAIL SCREEN */
+  #screen-detail {
+    background: var(--charcoal);
+  }
+
+  .detail-hero {
+    background: linear-gradient(135deg, var(--olive-dark) 0%, var(--charcoal) 100%);
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-avatar-lg {
+    width: 64px; height: 64px;
+    background: var(--olive);
+    border: 2px solid var(--gold);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .detail-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 30px;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+
+  .detail-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+    margin-top: 4px;
+  }
+
+  .score-bar-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .score-box {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .score-box-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--gold);
+  }
+
+  .score-box-lbl {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--gray);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .detail-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+
+  .coverage-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .coverage-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--sand);
+  }
+
+  .check { color: var(--success); font-size: 14px; }
+  .cross { color: var(--danger); font-size: 14px; }
+
+  .finance-box {
+    background: rgba(201,168,76,0.08);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 4px;
+    padding: 16px;
+  }
+
+  .finance-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .finance-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--sand);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+
+  .finance-row:last-child { border-bottom: none; }
+
+  .cta-fixed {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--olive-dark);
+    border-top: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn-outline {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 13px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { background: rgba(201,168,76,0.1); }
+
+  .btn-cta {
+    flex: 2;
+    background: var(--gold);
+    border: none;
+    color: var(--charcoal);
+    padding: 13px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .btn-cta:hover { background: var(--gold-light); }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: var(--olive-dark);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0 4px;
+    z-index: 100;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 6px;
+    transition: all 0.15s;
+  }
+
+  .nav-item:hover .nav-label, .nav-item.active .nav-label { color: var(--gold); }
+
+  .nav-icon { font-size: 20px; }
+  .nav-label {
+    font-size: 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray);
+    transition: color 0.15s;
+  }
+  .nav-item.active .nav-label { color: var(--gold); }
+
+  /* MEMBERSHIP */
+  #screen-membership {
+    background: var(--charcoal);
+    padding-bottom: 80px;
+  }
+
+  .membership-hero {
+    background: linear-gradient(160deg, var(--olive-dark), var(--charcoal));
+    padding: 24px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .membership-hero h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 4px;
+    color: var(--white);
+  }
+
+  .membership-hero p {
+    font-size: 12px;
+    color: var(--gray);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-top: 6px;
+  }
+
+  .plan-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .plan-card {
+    border-radius: 4px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    background: var(--olive-dark);
+    position: relative;
+  }
+
+  .plan-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(135deg, var(--olive-dark), rgba(201,168,76,0.08));
+  }
+
+  .plan-badge {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: var(--gold);
+    color: var(--charcoal);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    border-radius: 2px;
+  }
+
+  .plan-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--white);
+  }
+
+  .plan-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--gold);
+    line-height: 1;
+    margin: 8px 0;
+  }
+
+  .plan-price span {
+    font-size: 14px;
+    color: var(--gray);
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .plan-features {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .plan-feature {
+    font-size: 12px;
+    color: var(--sand);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .plan-feature .check { font-size: 12px; }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--success);
+    color: var(--white);
+    padding: 10px 24px;
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* PROFILE */
+  #screen-profile {
+    background: var(--charcoal);
+    padding-bottom: 80px;
+  }
+
+  .profile-hero {
+    background: linear-gradient(135deg, var(--olive-dark), var(--charcoal));
+    padding: 30px 20px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-avatar {
+    width: 72px; height: 72px;
+    background: var(--olive);
+    border: 2px solid var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--gold);
+    margin: 0 auto 14px;
+  }
+
+  .profile-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+  }
+
+  .profile-rank {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-top: 4px;
+  }
+
+  .profile-section {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 13px;
+    cursor: pointer;
+  }
+
+  .profile-row-label { color: var(--sand); }
+  .profile-row-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gray);
+  }
+
+  /* Mobile frame */
+  @media (min-width: 480px) {
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: #0d1109;
+      padding: 30px 0;
+    }
+
+    .app-container {
+      width: 390px;
+      min-height: 844px;
+      background: var(--charcoal);
+      border-radius: 40px;
+      overflow: hidden;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.05);
+      position: relative;
+    }
+
+    .screen { min-height: 844px; }
+    .bottom-nav { border-radius: 0 0 40px 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- SPLASH -->
+  <div id="screen-splash" class="screen active">
+    <div class="splash-inner">
+      <div class="logo-badge">DM</div>
+      <div class="app-name">DOTAMIL</div>
+      <div class="app-tagline">Dotación Militar Inteligente</div>
+
+      <div class="splash-stats">
+        <div class="stat-item">
+          <div class="stat-num">230K+</div>
+          <div class="stat-label">Efectivos</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Fuerzas</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">32</div>
+          <div class="stat-label">Depar.</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="go('home')">INGRESAR</button>
+      <br>
+      <button class="btn-secondary" onclick="go('membership')">Ver Membresías</button>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div id="screen-home" class="screen">
+    <div class="topbar">
+      <div class="topbar-title">DOTAMIL</div>
+      <div class="topbar-user">OF2 · CASTELLANOS</div>
+    </div>
+
+    <div class="home-header">
+      <div class="greeting">Bienvenido, Oficial</div>
+      <div class="user-name">GABRIEL A. CASTELLANOS</div>
+      <div class="user-rank">Oficial Segundo · Armada Nacional de Colombia</div>
+    </div>
+
+    <div class="urgency-banner">
+      <div class="urgency-dot"></div>
+      <span>Ceremonia programada en 48h · Cartagena · Uniforme Gala B requerido</span>
+    </div>
+
+    <div class="section-title">Categorías</div>
+
+    <div class="category-grid">
+      <div class="cat-card" onclick="go('list')">
+        <div class="cat-icon">🪖</div>
+        <div class="cat-name">Uniformes</div>
+        <div class="cat-count">18 proveedores</div>
+      </div>
+      <div class="cat-card" onclick="go('list')">
+        <div class="cat-icon">🎖️</div>
+        <div class="cat-name">Protocolo</div>
+        <div class="cat-count">12 proveedores</div>
+      </div>
+      <div class="cat-card" onclick="go('list')">
+        <div class="cat-icon">🏅</div>
+        <div class="cat-name">Condecoraciones e Insignias</div>
+        <div class="cat-count">11 proveedores</div>
+      </div>
+      <div class="cat-card" onclick="go('list')">
+        <div class="cat-icon">✂️</div>
+        <div class="cat-name">Sastrería & Arreglos</div>
+        <div class="cat-count">9 proveedores</div>
+      </div>
+    </div>
+
+    <div class="section-title">Proveedores Destacados</div>
+
+    <div class="providers-list">
+      <div class="provider-card" onclick="go('detail')">
+        <div class="provider-top">
+          <div class="provider-avatar">MC</div>
+          <div class="provider-info">
+            <div class="provider-name">MOZT Uniformes</div>
+            <div class="provider-location">📍 Bogotá · Envío nacional</div>
+          </div>
+          <div class="provider-score">
+            <div class="score-num">9.4</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="provider-tags">
+          <span class="tag tag-price">MEJOR PRECIO</span>
+          <span class="tag tag-fast">ENTREGA 24H</span>
+          <span class="tag tag-secure">VERIFICADO</span>
+          <span class="tag tag-delivery">ENVÍO NACIONAL</span>
+        </div>
+        <div class="provider-metrics">
+          <div class="metric">
+            <div class="metric-val">98%</div>
+            <div class="metric-lbl">Disponib.</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">24h</div>
+            <div class="metric-lbl">Entrega</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">⭐ 4.8</div>
+            <div class="metric-lbl">Rating</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="provider-card" onclick="go('detail')">
+        <div class="provider-top">
+          <div class="provider-avatar">CC</div>
+          <div class="provider-info">
+            <div class="provider-name">Carlos Caballero</div>
+            <div class="provider-location">📍 Bogotá · Medellín · Cali</div>
+          </div>
+          <div class="provider-score">
+            <div class="score-num">8.9</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="provider-tags">
+          <span class="tag tag-secure">VERIFICADO</span>
+          <span class="tag tag-fast">TALLAS ESPECIALES</span>
+        </div>
+        <div class="provider-metrics">
+          <div class="metric">
+            <div class="metric-val">94%</div>
+            <div class="metric-lbl">Disponib.</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">48h</div>
+            <div class="metric-lbl">Entrega</div>
+          </div>
+          <div class="metric">
+            <div class="metric-val">⭐ 4.6</div>
+            <div class="metric-lbl">Rating</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Inicio</div>
+      </div>
+      <div class="nav-item" onclick="go('list')">
+        <div class="nav-icon">🔍</div>
+        <div class="nav-label">Buscar</div>
+      </div>
+      <div class="nav-item" onclick="go('membership')">
+        <div class="nav-icon">⭐</div>
+        <div class="nav-label">Planes</div>
+      </div>
+      <div class="nav-item" onclick="go('profile')">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div id="screen-list" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="go('home')">← Atrás</button>
+      <div class="topbar-title">PROVEEDORES</div>
+      <div></div>
+    </div>
+
+    <div class="filter-bar">
+      <div class="filter-chip active">TODOS</div>
+      <div class="filter-chip">PRECIO ↑</div>
+      <div class="filter-chip">MÁS CERCANO</div>
+      <div class="filter-chip">DISPONIBLE HOY</div>
+      <div class="filter-chip">FINANCIACIÓN</div>
+    </div>
+
+    <div class="providers-list">
+      <div class="provider-card" onclick="go('detail')">
+        <div class="provider-top">
+          <div class="provider-avatar">MC</div>
+          <div class="provider-info">
+            <div class="provider-name">MOZT Uniformes</div>
+            <div class="provider-location">📍 Bogotá · Envío nacional</div>
+          </div>
+          <div class="provider-score">
+            <div class="score-num">9.4</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="provider-tags">
+          <span class="tag tag-price">MEJOR PRECIO</span>
+          <span class="tag tag-fast">ENTREGA 24H</span>
+          <span class="tag tag-secure">VERIFICADO</span>
+          <span class="tag tag-delivery">ENVÍO NACIONAL</span>
+        </div>
+        <div class="provider-metrics">
+          <div class="metric"><div class="metric-val">98%</div><div class="metric-lbl">Disponib.</div></div>
+          <div class="metric"><div class="metric-val">24h</div><div class="metric-lbl">Entrega</div></div>
+          <div class="metric"><div class="metric-val">⭐ 4.8</div><div class="metric-lbl">Rating</div></div>
+        </div>
+      </div>
+
+      <div class="provider-card" onclick="go('detail')">
+        <div class="provider-top">
+          <div class="provider-avatar">CC</div>
+          <div class="provider-info">
+            <div class="provider-name">Carlos Caballero</div>
+            <div class="provider-location">📍 Bogotá · Medellín · Cali</div>
+          </div>
+          <div class="provider-score">
+            <div class="score-num">8.9</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="provider-tags">
+          <span class="tag tag-secure">VERIFICADO</span>
+          <span class="tag tag-fast">TALLAS ESPECIALES</span>
+        </div>
+        <div class="provider-metrics">
+          <div class="metric"><div class="metric-val">94%</div><div class="metric-lbl">Disponib.</div></div>
+          <div class="metric"><div class="metric-val">48h</div><div class="metric-lbl">Entrega</div></div>
+          <div class="metric"><div class="metric-val">⭐ 4.6</div><div class="metric-lbl">Rating</div></div>
+        </div>
+      </div>
+
+      <div class="provider-card" onclick="go('detail')">
+        <div class="provider-top">
+          <div class="provider-avatar">VR</div>
+          <div class="provider-info">
+            <div class="provider-name">Victoria Rico</div>
+            <div class="provider-location">📍 Cartagena · Barranquilla</div>
+          </div>
+          <div class="provider-score">
+            <div class="score-num">8.6</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="provider-tags">
+          <span class="tag tag-delivery">COSTA ATLÁNTICA</span>
+          <span class="tag tag-price">FINANCIACIÓN</span>
+        </div>
+        <div class="provider-metrics">
+          <div class="metric"><div class="metric-val">90%</div><div class="metric-lbl">Disponib.</div></div>
+          <div class="metric"><div class="metric-val">36h</div><div class="metric-lbl">Entrega</div></div>
+          <div class="metric"><div class="metric-val">⭐ 4.5</div><div class="metric-lbl">Rating</div></div>
+        </div>
+      </div>
+
+      <div class="provider-card" onclick="go('detail')">
+        <div class="provider-top">
+          <div class="provider-avatar">SB</div>
+          <div class="provider-info">
+            <div class="provider-name">Sastre Bogotá Premium</div>
+            <div class="provider-location">📍 Bogotá D.C. · Recogida en tienda</div>
+          </div>
+          <div class="provider-score">
+            <div class="score-num">9.1</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="provider-tags">
+          <span class="tag tag-fast">PERSONALIZADO</span>
+          <span class="tag tag-secure">VETERANO PROPIETARIO</span>
+        </div>
+        <div class="provider-metrics">
+          <div class="metric"><div class="metric-val">100%</div><div class="metric-lbl">Disponib.</div></div>
+          <div class="metric"><div class="metric-val">72h</div><div class="metric-lbl">Entrega</div></div>
+          <div class="metric"><div class="metric-val">⭐ 4.9</div><div class="metric-lbl">Rating</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="go('home')">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Inicio</div>
+      </div>
+      <div class="nav-item active">
+        <div class="nav-icon">🔍</div>
+        <div class="nav-label">Buscar</div>
+      </div>
+      <div class="nav-item" onclick="go('membership')">
+        <div class="nav-icon">⭐</div>
+        <div class="nav-label">Planes</div>
+      </div>
+      <div class="nav-item" onclick="go('profile')">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAIL -->
+  <div id="screen-detail" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="go('list')">← Atrás</button>
+      <div class="topbar-title">PROVEEDOR</div>
+      <div></div>
+    </div>
+
+    <div style="overflow-y: auto; padding-bottom: 80px;">
+      <div class="detail-hero">
+        <div class="detail-avatar-lg">MC</div>
+        <div class="detail-name">MOZT Uniformes</div>
+        <div class="detail-meta">📍 Bogotá D.C. · Envío a todo Colombia · Verificado DOTAMIL ✓</div>
+
+        <div class="score-bar-row">
+          <div class="score-box">
+            <div class="score-box-num">9.4</div>
+            <div class="score-box-lbl">Score General</div>
+          </div>
+          <div class="score-box">
+            <div class="score-box-num">9.6</div>
+            <div class="score-box-lbl">Precio</div>
+          </div>
+          <div class="score-box">
+            <div class="score-box-num">9.8</div>
+            <div class="score-box-lbl">Disponib.</div>
+          </div>
+          <div class="score-box">
+            <div class="score-box-num">8.9</div>
+            <div class="score-box-lbl">Logística</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Cobertura Nacional</div>
+        <div class="coverage-list">
+          <div class="coverage-item"><span class="check">✔</span> Bogotá D.C. – Entrega en 24h</div>
+          <div class="coverage-item"><span class="check">✔</span> Cartagena – Entrega en 36h</div>
+          <div class="coverage-item"><span class="check">✔</span> Barranquilla – Entrega en 36h</div>
+          <div class="coverage-item"><span class="check">✔</span> Medellín – Entrega en 48h</div>
+          <div class="coverage-item"><span class="check">✔</span> Bucaramanga – Entrega en 48h</div>
+          <div class="coverage-item"><span class="check">✔</span> Leticia / Zonas remotas – Entrega en 72h</div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Financiación Disponible</div>
+        <div class="finance-box">
+          <div class="finance-title">💳 Pago en cuotas sin interés</div>
+          <div class="finance-row"><span>Cuotas disponibles</span><span>3 / 6 / 12 meses</span></div>
+          <div class="finance-row"><span>Interés</span><span>0% primeras 3 cuotas</span></div>
+          <div class="finance-row"><span>Monto mínimo</span><span>$150.000 COP</span></div>
+          <div class="finance-row"><span>Aprobación</span><span>Inmediata en app</span></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Responsabilidad Social</div>
+        <div style="font-size: 13px; color: var(--sand); line-height: 1.6;">
+          🎖️ <strong style="color: var(--gold);">Proveedor aliado DOTAMIL RSE:</strong> Este proveedor emplea militares retirados y veteranos heridos en combate como parte de su equipo de atención y logística. Al comprar aquí, apoyas la reintegración laboral de quienes sirvieron a Colombia.
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Categorías Disponibles</div>
+        <div class="coverage-list">
+          <div class="coverage-item"><span class="check">✔</span> Uniformes y prendas de campaña</div>
+          <div class="coverage-item"><span class="check">✔</span> Uniformes de protocolo</div>
+          <div class="coverage-item"><span class="check">✔</span> Condecoraciones e insignias</div>
+          <div class="coverage-item"><span class="cross">✘</span> Sastrería personalizada</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-fixed">
+      <button class="btn-outline">💬 Contactar</button>
+      <button class="btn-cta" onclick="go('products')">VER PRODUCTOS</button>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div id="screen-products" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="go('detail')">← Atrás</button>
+      <div class="topbar-title">PRODUCTOS</div>
+      <div></div>
+    </div>
+
+    <div style="overflow-y: auto; padding-bottom: 80px;">
+
+      <div style="padding: 14px 20px 4px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); letter-spacing: 1px;">MOZT UNIFORMES · 6 PRODUCTOS DISPONIBLES</div>
+
+      <div class="filter-bar">
+        <div class="filter-chip active" onclick="filterProducts('todos', this)">TODOS</div>
+        <div class="filter-chip" onclick="filterProducts('uniformes', this)">UNIFORMES</div>
+        <div class="filter-chip" onclick="filterProducts('protocolo', this)">PROTOCOLO</div>
+        <div class="filter-chip" onclick="filterProducts('insignias', this)">INSIGNIAS</div>
+      </div>
+
+      <div id="product-list" style="padding: 0 20px; display: flex; flex-direction: column; gap: 12px;">
+
+        <div class="product-item" data-cat="uniformes" style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="selectProduct('Uniforme de Campaña', '$220.000', 'Talla S / M / L / XL')">
+          <div style="width: 48px; height: 48px; background: var(--olive); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🪖</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">Uniforme de Campaña</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px;">Talla S / M / L / XL · Disponible</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$220.000</div>
+            <div style="font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--success);">EN STOCK</div>
+          </div>
+        </div>
+
+        <div class="product-item" data-cat="uniformes" style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="selectProduct('Uniforme Operacional Completo', '$380.000', 'Talla S / M / L / XL')">
+          <div style="width: 48px; height: 48px; background: var(--olive); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🪖</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">Uniforme Operacional Completo</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px;">Incluye camisa, pantalón y boina · Disponible</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$380.000</div>
+            <div style="font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--success);">EN STOCK</div>
+          </div>
+        </div>
+
+        <div class="product-item" data-cat="protocolo" style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="selectProduct('Uniforme de Protocolo', '$480.000', 'Talla S / M / L / XL')">
+          <div style="width: 48px; height: 48px; background: var(--olive); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🎖️</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">Uniforme de Protocolo</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px;">Gala oficial · Armada Nacional · Disponible</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$480.000</div>
+            <div style="font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--success);">EN STOCK</div>
+          </div>
+        </div>
+
+        <div class="product-item" data-cat="protocolo" style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="selectProduct('Camisa de Protocolo', '$185.000', 'Talla S / M / L / XL')">
+          <div style="width: 48px; height: 48px; background: var(--olive); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🎖️</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">Camisa de Protocolo</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px;">Manga larga reglamentaria · Disponible</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$185.000</div>
+            <div style="font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--success);">EN STOCK</div>
+          </div>
+        </div>
+
+        <div class="product-item" data-cat="insignias" style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="selectProduct('Set Insignias Oficial Segundo', '$95.000', 'Talla única')">
+          <div style="width: 48px; height: 48px; background: var(--olive); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🏅</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">Set Insignias Oficial Segundo</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px;">Incluye charreteras y distintivos · Disponible</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$95.000</div>
+            <div style="font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--success);">EN STOCK</div>
+          </div>
+        </div>
+
+        <div class="product-item" data-cat="insignias" style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; cursor: pointer;" onclick="selectProduct('Condecoración Cruz de Boyacá', '$140.000', 'Talla única')">
+          <div style="width: 48px; height: 48px; background: var(--olive); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🏅</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">Condecoración Cruz de Boyacá</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 2px;">Réplica oficial certificada · Disponible</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$140.000</div>
+            <div style="font-size: 9px; font-family: 'IBM Plex Mono', monospace; color: var(--success);">EN STOCK</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CART -->
+  <div id="screen-cart" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="go('products')">← Atrás</button>
+      <div class="topbar-title">MI PEDIDO</div>
+      <div></div>
+    </div>
+
+    <div style="overflow-y: auto; padding-bottom: 100px;">
+
+      <div style="padding: 20px; border-bottom: 1px solid var(--border);">
+        <div class="detail-section-title">Resumen del Pedido</div>
+        <div style="display: flex; align-items: center; gap: 14px; background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px;">
+          <div style="width: 44px; height: 44px; background: var(--olive); border-radius: 2px; display: flex; align-items: center; justify-content: center; font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold); flex-shrink: 0;">MC</div>
+          <div style="flex: 1;">
+            <div style="font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; color: var(--white);">MOZT Uniformes</div>
+            <div id="cart-product-name" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray);">Uniforme de Protocolo · Talla M</div>
+          </div>
+          <div id="cart-product-price" style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--gold);">$280.000</div>
+        </div>
+
+        <div style="margin-top: 12px; display: flex; gap: 10px; align-items: center;">
+          <div style="font-size: 12px; color: var(--gray); font-family: 'IBM Plex Mono', monospace;">Cantidad:</div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button onclick="changeQty(-1)" style="background: var(--olive-dark); border: 1px solid var(--border); color: var(--sand); width: 28px; height: 28px; border-radius: 2px; cursor: pointer; font-size: 16px;">−</button>
+            <span id="qty-val" style="font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--white); min-width: 20px; text-align: center;">1</span>
+            <button onclick="changeQty(1)" style="background: var(--olive-dark); border: 1px solid var(--border); color: var(--sand); width: 28px; height: 28px; border-radius: 2px; cursor: pointer; font-size: 16px;">+</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding: 20px; border-bottom: 1px solid var(--border);">
+        <div class="detail-section-title">Dirección de Entrega</div>
+        <div style="background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 14px; font-size: 13px; color: var(--sand); display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-weight: 600;">Base Naval ARC Bolívar</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gray); margin-top: 3px;">Cartagena, Bolívar · Entrega en 36h</div>
+          </div>
+          <div style="font-size: 12px; color: var(--gold); cursor: pointer;">Cambiar</div>
+        </div>
+      </div>
+
+      <div style="padding: 20px; border-bottom: 1px solid var(--border);">
+        <div class="detail-section-title">Método de Pago</div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <label style="display: flex; align-items: center; gap: 12px; background: var(--olive-dark); border: 1px solid var(--gold); border-radius: 4px; padding: 12px; cursor: pointer;">
+            <input type="radio" name="pago" checked style="accent-color: var(--gold);">
+            <div>
+              <div style="font-size: 13px; color: var(--white);">Pago único</div>
+              <div style="font-size: 10px; color: var(--gray); font-family: 'IBM Plex Mono', monospace;">$280.000 COP</div>
+            </div>
+          </label>
+          <label style="display: flex; align-items: center; gap: 12px; background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 12px; cursor: pointer;">
+            <input type="radio" name="pago" style="accent-color: var(--gold);">
+            <div>
+              <div style="font-size: 13px; color: var(--white);">3 cuotas sin interés</div>
+              <div style="font-size: 10px; color: var(--gray); font-family: 'IBM Plex Mono', monospace;">$93.333 COP / mes</div>
+            </div>
+          </label>
+          <label style="display: flex; align-items: center; gap: 12px; background: var(--olive-dark); border: 1px solid var(--border); border-radius: 4px; padding: 12px; cursor: pointer;">
+            <input type="radio" name="pago" style="accent-color: var(--gold);">
+            <div>
+              <div style="font-size: 13px; color: var(--white);">6 cuotas</div>
+              <div style="font-size: 10px; color: var(--gray); font-family: 'IBM Plex Mono', monospace;">$46.666 COP / mes</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div style="padding: 20px;">
+        <div class="detail-section-title">Total</div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--sand); padding: 6px 0; border-bottom: 1px solid var(--border);">
+          <span>Subtotal</span><span>$280.000</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 13px; font-family: 'IBM Plex Mono', monospace; color: var(--sand); padding: 6px 0; border-bottom: 1px solid var(--border);">
+          <span>Envío estimado</span><span style="color: var(--success);">GRATIS</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 1px; color: var(--white);">TOTAL</span>
+          <span style="font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--gold);">$280.000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-fixed">
+      <button class="btn-outline" onclick="go('detail')">← Volver</button>
+      <button class="btn-cta" onclick="showToast('✔ ¡Pedido confirmado! Llega en 36h'); go('home')">CONFIRMAR PEDIDO</button>
+    </div>
+  </div>
+
+  <!-- MEMBERSHIP -->
+  <div id="screen-membership" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="go('home')">← Atrás</button>
+      <div class="topbar-title">MEMBRESÍAS</div>
+      <div></div>
+    </div>
+
+    <div class="membership-hero">
+      <h2>ELIGE TU PLAN</h2>
+      <p>Acceso escalonado · Beneficios progresivos</p>
+    </div>
+
+    <div class="plan-cards">
+      <div class="plan-card">
+        <div class="plan-name">TROPA</div>
+        <div class="plan-price">$0 <span>/ mes · Gratis</span></div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="check">✔</span> Búsqueda básica de proveedores</div>
+          <div class="plan-feature"><span class="check">✔</span> Ver top 5 proveedores</div>
+          <div class="plan-feature"><span class="check">✔</span> Filtros: precio y disponibilidad</div>
+          <div class="plan-feature" style="color: var(--gray);">✘ Envío prioritario</div>
+          <div class="plan-feature" style="color: var(--gray);">✘ Financiación en app</div>
+        </div>
+        <button class="btn-secondary" style="margin-top: 16px; max-width: 100%; width: 100%;">PLAN ACTUAL</button>
+      </div>
+
+      <div class="plan-card featured">
+        <div class="plan-badge">MÁS POPULAR</div>
+        <div class="plan-name">OFICIAL</div>
+        <div class="plan-price">$19.900 <span>/ mes</span></div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="check">✔</span> Todo el plan Tropa</div>
+          <div class="plan-feature"><span class="check">✔</span> Top completo de proveedores</div>
+          <div class="plan-feature"><span class="check">✔</span> Filtro por ciudad y entrega urgente</div>
+          <div class="plan-feature"><span class="check">✔</span> Financiación integrada en app</div>
+          <div class="plan-feature"><span class="check">✔</span> Alertas de disponibilidad</div>
+          <div class="plan-feature" style="color: var(--gray);">✘ Acceso institucional</div>
+        </div>
+        <button class="btn-primary" style="margin-top: 16px; max-width: 100%; width: 100%;" onclick="showToast('¡Plan activado!')">ACTIVAR PLAN</button>
+      </div>
+
+      <div class="plan-card">
+        <div class="plan-name">COMANDO</div>
+        <div class="plan-price">$49.900 <span>/ mes</span></div>
+        <div style="font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: var(--gold); margin-bottom: 8px;">+ Convenio institucional Armada</div>
+        <div class="plan-features">
+          <div class="plan-feature"><span class="check">✔</span> Todo el plan Oficial</div>
+          <div class="plan-feature"><span class="check">✔</span> Gestión de pedidos grupales</div>
+          <div class="plan-feature"><span class="check">✔</span> Historial y reportes de compra</div>
+          <div class="plan-feature"><span class="check">✔</span> Soporte prioritario 24/7</div>
+          <div class="plan-feature"><span class="check">✔</span> Integración con intendencia institucional</div>
+        </div>
+        <button class="btn-secondary" style="margin-top: 16px; max-width: 100%; width: 100%;" onclick="showToast('Solicitud enviada')">SOLICITAR</button>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="go('home')">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Inicio</div>
+      </div>
+      <div class="nav-item" onclick="go('list')">
+        <div class="nav-icon">🔍</div>
+        <div class="nav-label">Buscar</div>
+      </div>
+      <div class="nav-item active">
+        <div class="nav-icon">⭐</div>
+        <div class="nav-label">Planes</div>
+      </div>
+      <div class="nav-item" onclick="go('profile')">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div id="screen-profile" class="screen">
+    <div class="topbar">
+      <button class="back-btn" onclick="go('home')">← Atrás</button>
+      <div class="topbar-title">MI PERFIL</div>
+      <div></div>
+    </div>
+
+    <div class="profile-hero">
+      <div class="profile-avatar">GC</div>
+      <div class="profile-name">GABRIEL A. CASTELLANOS V.</div>
+      <div class="profile-rank">OFICIAL SEGUNDO · ARMADA NACIONAL</div>
+    </div>
+
+    <div class="profile-section">
+      <div class="detail-section-title">Información de Servicio</div>
+      <div class="profile-row">
+        <span class="profile-row-label">Fuerza</span>
+        <span class="profile-row-val">Armada Nacional</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Rango</span>
+        <span class="profile-row-val">Oficial Segundo (OF2)</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Ciudad base</span>
+        <span class="profile-row-val">Bogotá D.C.</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Membresía activa</span>
+        <span class="profile-row-val" style="color: var(--success);">TROPA (Gratis)</span>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="detail-section-title">Mis Pedidos</div>
+      <div class="profile-row">
+        <span class="profile-row-label">Pedidos realizados</span>
+        <span class="profile-row-val">0</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Proveedores favoritos</span>
+        <span class="profile-row-val">— Agregar →</span>
+      </div>
+    </div>
+
+    <div class="profile-section">
+      <div class="detail-section-title">Seguridad</div>
+      <div class="profile-row">
+        <span class="profile-row-label">Verificación militar</span>
+        <span class="profile-row-val" style="color: var(--success);">✔ Verificado</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-row-label">Referencias de seguridad</span>
+        <span class="profile-row-val">2 de 3 →</span>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="go('home')">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label">Inicio</div>
+      </div>
+      <div class="nav-item" onclick="go('list')">
+        <div class="nav-icon">🔍</div>
+        <div class="nav-label">Buscar</div>
+      </div>
+      <div class="nav-item" onclick="go('membership')">
+        <div class="nav-icon">⭐</div>
+        <div class="nav-label">Planes</div>
+      </div>
+      <div class="nav-item active">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">Perfil</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div>
+
+<script>
+  function go(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screen).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  let qty = 1;
+  let selectedProduct = { name: 'Uniforme de Protocolo', price: '$480.000', talla: 'Talla S / M / L / XL' };
+
+  function selectProduct(name, price, talla) {
+    selectedProduct = { name, price, talla };
+    document.getElementById('cart-product-name').textContent = name + ' · ' + talla;
+    document.getElementById('cart-product-price').textContent = price;
+    go('cart');
+  }
+
+  function filterProducts(cat, el) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.product-item').forEach(item => {
+      item.style.display = (cat === 'todos' || item.dataset.cat === cat) ? 'flex' : 'none';
+    });
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, qty + delta);
+    document.getElementById('qty-val').textContent = qty;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+</script>
+
+</body>
+</html>
